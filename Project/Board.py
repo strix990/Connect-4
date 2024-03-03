@@ -1,6 +1,6 @@
-from os import system, name
+from os import system
+#from a_star impor A_Star
 import copy
-#import heuristic
 
 class Cor: #For colors, pretty self intuitive
     RESET = '\033[0m'
@@ -64,8 +64,18 @@ def Red_moves(Game, red_human_player): #Computes Reds movement
                     Make_Move(Return_Board, move, 'R')
                     break
             print("Invalid move you moron")
-    system('clear')
-    return Return_Board
+    # else:
+    #     for i in range(7): #Checks if all columns are filled (in other words if a move is possible), if it is, print the corresponding number above the column
+    #         if(Return_Board.Grid[0][i] == 'X'):
+    #             print(i+1, end= " ")
+    #             list_possible_moves[i] = True #Also sets the possible moves list in its i possition to true
+    #         else:
+    #             print(" ", end = " ") #Else sets it to false just to make sure
+    #             list_possible_moves[i] = False
+    #     print()
+    #     Return_Board.print_grid()
+    # system('clear')
+    # return Return_Board
 
 def Blue_moves(Game, blue_human_player): #Computes Blues movement
     Return_Board = Board() 
