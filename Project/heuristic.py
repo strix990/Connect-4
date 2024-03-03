@@ -35,33 +35,33 @@ def Is_Red(piece):
     else:
         return False
 
-def Compute_Lines(Game):
+def Compute_Lines(Game): #Compute all 4 line pieces segments
     total = 0
     count_R = 0
     count_B = 0
-    for i in range(6):
-        for j1 in range(0,4,1):
-            for j2 in range(0,4,1):
+    for i in range(6): #Grid Lines
+        for j1 in range(0,4,1): #segment offset, 4 for each line
+            for j2 in range(0,4,1): #4 pieces
                 if(Game.Grid[i][j1+j2] == 'X'):
                     continue
                 elif(Is_Red(Game.Grid[i][j1+j2])):
                     count_R += 1
                 else:
                     count_B += 1
-            total += Compute_Score(count_R, count_B, total)
+            total += Compute_Score(count_R, count_B, total)#Score calculation
             if(total == 512 or total == -512):
                 return total
             count_R = 0
             count_B = 0
     return total        
                     
-def Compute_Columns(Game):
+def Compute_Columns(Game):#Compute all 4 columns pieces segments
     total = 0
     count_R = 0
     count_B = 0
-    for j in range(6):
-        for i1 in range(0,3,1):
-            for i2 in range(0,4,1):
+    for j in range(7):#Grid Columns
+        for i1 in range(0,3,1):#segment offset, 3 for each column
+            for i2 in range(0,4,1):#4 pieces
                 if(Game.Grid[i1+i2][j] == 'X'):
                     continue
                 elif(Is_Red(Game.Grid[i1+i2][j])):
@@ -80,9 +80,10 @@ def Compute_Diagonals(Game):
     count_R = 0
     count_B = 0
     for i in range(3): #Diagonal positiva 1/2
-        while(3-i>0):
-            for j in range(3):
-                if(Game.Grid[i+j][0+j] == 'X'):
+        temp = 3
+        while(3-temp>0):
+            for j in range(4):
+                if(Game.Grid[i+j+temp][0+j+temp] == 'X'):
                     continue
                 elif(Is_Red(Game.Grid[i+j][0+j])):
                     count_R += 1
@@ -93,7 +94,8 @@ def Compute_Diagonals(Game):
                 return total
             count_R = 0
             count_B = 0
-            for j2 in range(3):#Diagonal positiva 2/2
+            temp += 1
+            '''for j2 in range(3):#Diagonal positiva 2/2
                 if(Game.Grid[0+j2][(i+1)+j2] == 'X'):
                     continue
                 elif(Is_Red(Game.Grid[0+j2][(i+1)+j2])):
@@ -104,8 +106,7 @@ def Compute_Diagonals(Game):
             if(total == 512 or total == -512):
                 return total
             count_R = 0
-            count_B = 0
-            break
+            count_B = 0'''
     return total
         
 
