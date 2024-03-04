@@ -1,4 +1,4 @@
-from board import Board
+#from Board import Board
 
 def Compute_Score(count_R, count_B): #Calculates the value for a set of pieces , as specified in the project worksheet
     if(count_R >= 1 and count_B >= 1):#Mixed pieces
@@ -177,13 +177,13 @@ def Total_Value(Game):
     return (sum_lines + sum_columns + sum_diagonals)
 
 total = 0 #Declared as a Global Variable, mainly becaused it's used across multiple functions
-bravo = Board()
-bravo.Grid[0][5] = 'B'
-bravo.Grid[0][1] = 'R'
-bravo.Grid[0][2] = 'R'
-bravo.Grid[0][3] = 'R'
-bravo.Grid[0][4] = 'B'
-bravo.Grid[0][0] = 'R'
-bravo.print_grid()
-out = Total_Value(bravo)
-print(out)
+# bravo = Board()
+# bravo.Grid[0][5] = 'B'
+# bravo.Grid[0][1] = 'R'
+# bravo.Grid[0][2] = 'R'
+# bravo.Grid[0][3] = 'R'
+# bravo.Grid[0][4] = 'B'
+# bravo.Grid[0][0] = 'R'
+# bravo.print_grid()
+# out = Total_Value(bravo)
+# print(out)
