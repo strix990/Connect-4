@@ -1,6 +1,7 @@
 from os import system
-#from a_star impor A_Star
+# #from a_star impor A_Star
 import copy
+from a_star import *
 
 class Cor: #For colors, pretty self intuitive
     RESET = '\033[0m'
@@ -38,10 +39,10 @@ def Make_Move(Return_Board, index, color): #Computes the move, inputed by the in
             return
     print("You should not be here")
 
-def Red_moves(Game, red_human_player): #Computes Reds movement
-    Return_Board = Board() 
-    lista_temp = copy.deepcopy(Game.Grid)
-    setattr(Return_Board, 'Grid', lista_temp) #For the last three lines, because of python refence bullshittery, I had to make a deepcopy of the Board.Grid. Right now either the value is passed by reference or not doesn't make a difference but in order to no fuck up the code in the future I made it this way. Any other solutions are welcome since this looks ugly and must be pretty inneficient :3
+def Red_moves(Return_Board, red_human_player, heuristic): #Computes Reds movement
+    # Return_Board = Board() 
+    # lista_temp = copy.deepcopy(Game.Grid)
+    # setattr(Return_Board, 'Grid', lista_temp) #For the last three lines, because of python refence bullshittery, I had to make a deepcopy of the Board.Grid. Right now either the value is passed by reference or not doesn't make a difference but in order to no fuck up the code in the future I made it this way. Any other solutions are welcome since this looks ugly and must be pretty inneficient :3
     list_possible_moves = [False for _ in range(7)] #List of possible moves, for now its entirety is false
     if(red_human_player): #Checks if Red player is human or not, the negative case is not currently implemented
         print("Reds Turn")
@@ -64,23 +65,26 @@ def Red_moves(Game, red_human_player): #Computes Reds movement
                     Make_Move(Return_Board, move, 'R')
                     break
             print("Invalid move you moron")
-    # else:
-    #     for i in range(7): #Checks if all columns are filled (in other words if a move is possible), if it is, print the corresponding number above the column
-    #         if(Return_Board.Grid[0][i] == 'X'):
-    #             print(i+1, end= " ")
-    #             list_possible_moves[i] = True #Also sets the possible moves list in its i possition to true
-    #         else:
-    #             print(" ", end = " ") #Else sets it to false just to make sure
-    #             list_possible_moves[i] = False
-    #     print()
-    #     Return_Board.print_grid()
-    # system('clear')
-    # return Return_Board
+        heuristic = Total_Value(Return_Board)
+    else:
+        for i in range(7): #Checks if all columns are filled (in other words if a move is possible), if it is, print the corresponding number above the column
+            if(Return_Board.Grid[0][i] == 'X'):
+                print(i+1, end= " ")
+                list_possible_moves[i] = True #Also sets the possible moves list in its i possition to true
+            else:
+                print(" ", end = " ") #Else sets it to false just to make sure
+                list_possible_moves[i] = False
+        print()
+        Return_Board.print_grid()
+        heuristic = A_Star(list_possible_moves, 'R', Return_Board, heuristic)
+        Return_Board.print_grid()
+    system('clear')
+    return heuristic
 
-def Blue_moves(Game, blue_human_player): #Computes Blues movement
-    Return_Board = Board() 
-    lista_temp = copy.deepcopy(Game.Grid)
-    setattr(Return_Board, 'Grid', lista_temp) #For the last three lines, because of python refence bullshittery, I had to make a deepcopy of the Board.Grid. Right now either the value is passed by reference or not doesn't matter but in order to no fuck up the code in the future I made it this way. Any other solutions are welcome since this looks ugly and must be pretty inneficient :3
+def Blue_moves(Return_Board:Board, blue_human_player, heuristic): #Computes Blues movement
+    # Return_Board = Board() 
+    # lista_temp = copy.deepcopy(Game.Grid)
+    # setattr(Return_Board, 'Grid', lista_temp) #For the last three lines, because of python refence bullshittery, I had to make a deepcopy of the Board.Grid. Right now either the value is passed by reference or not doesn't matter but in order to no fuck up the code in the future I made it this way. Any other solutions are welcome since this looks ugly and must be pretty inneficient :3
     list_possible_moves = [False for _ in range(7)] #List of possible moves
     if(blue_human_player): #Checks if the blue player is human or not, the negative case is not currently implemented
         print("Blues Turn")
@@ -103,8 +107,22 @@ def Blue_moves(Game, blue_human_player): #Computes Blues movement
                     Make_Move(Return_Board, move, 'B')
                     break
             print("Invalid move you moron")
+    else:
+        for i in range(7): #Checks if all columns are filled (in other words if a move is possible), if it is, print the corresponding number above the column
+            if(Return_Board.Grid[0][i] == 'X'):
+                print(i+1, end= " ")
+                list_possible_moves[i] = True #Also sets the possible moves list in its i possition to true
+            else:
+                print(" ", end = " ") #Else sets it to false just to make sure
+                list_possible_moves[i] = False
+        print()
+        Return_Board.print_grid()
+        heuristic = A_Star(list_possible_moves, 'B', Return_Board, heuristic)
+        Return_Board.print_grid()
     system('clear')
-    return Return_Board
+    return heuristic
+    system('clear')
+    return heuristic
 
 def Game_is_Over(test, color): #Checks if the Game is over
     for i in range(3):
@@ -141,16 +159,4 @@ def Check_Diagonal(Game, i_plus, j_plus, player): # Simple checking Diagonal alg
         return True
     return False
 
-'''def main():
-    red_human_player = True
-    blue_human_player = True
-    print(Cor.MAGENTA + "Super duper ultra mega incredible IA project!" + Cor.RESET) # Very important!
-    test = Board()
-    while(True): #Used for playing the game, first comes reds turn then if the game is not over comes blues turn and again if it's no over it loops back to reds turn
-        test = Red_moves(test, red_human_player)
-        if(Game_is_Over(test, 'R')):
-            break
-        test = Blue_moves(test, blue_human_player)
-        if(Game_is_Over(test, 'B')):
-            break 
-#main()#Currently nothing but the Board implemented'''
+
