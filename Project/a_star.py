@@ -30,8 +30,9 @@ def Make_Move(Return_Board, index, color): #Computes the move, inputed by the in
     print("You should not be here")
 
 def A_Star(visited, playerColor, game, heuristic_value):
-    greatest_value = 0
+    greatest_value = heuristic_value
     move_position = 0
+    value_temp = 0
     for i in range(7):
         if (visited[i]):
             a_star_board = Board_A() 
@@ -39,14 +40,15 @@ def A_Star(visited, playerColor, game, heuristic_value):
             setattr(a_star_board, 'Grid', lista_temp) #For the last three lines, because of python refence bullshittery, I had to make a deepcopy of the Board.Grid. Right now either the value is passed by reference or not doesn't make a difference but in order to no fuck up the code in the future I made it this way. Any other solutions are welcome since this looks ugly and must be pretty inneficient :3
             Make_Move(a_star_board, i, playerColor)
             value_temp = Total_Value(a_star_board)
+            print("Valor na (" + str(i) + " " + str(value_temp) + ")")
             if(Is_Red(playerColor)):
-                 if(value_temp > heuristic_value):
+                 if(value_temp > greatest_value):
                      greatest_value = value_temp
-                     move_position = i + 1
+                     move_position = i
             else:
-                if(value_temp < heuristic_value):
+                if(value_temp < greatest_value):
                      greatest_value = value_temp
-                     move_position = i + 1
+                     move_position = i
             value_temp = 0            
     Make_Move(game, move_position, playerColor)    
     return greatest_value           
