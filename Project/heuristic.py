@@ -1,5 +1,28 @@
 #from Board import Board
 
+class Cor: #For colors, pretty self intuitive
+    RESET = '\033[0m'
+    VERMELHO = '\033[91m'
+    AZUL = '\033[94m'
+    MAGENTA = '\033[95m'
+
+class Board: #The Board contains the games grid and a method to output the grid to the stdout
+    def __init__(self):
+        self.Grid = [['X' for _ in range(7)] for _ in range(6)] # Initializes the Boards Grid with empty spaces
+
+    def print_grid(self):  # Prints the Grid, pretty self intuitive
+        for i in range(6):
+            for j in range(7):
+                if(self.Grid[i][j] == 'R'):
+                    print(Cor.VERMELHO + self.Grid[i][j] + Cor.RESET, end=" ")
+                if(self.Grid[i][j] == 'B'):
+                    print(Cor.AZUL + self.Grid[i][j] + Cor.RESET, end=" ")
+                if(self.Grid[i][j] == 'X'):
+                    print(self.Grid[i][j], end=" ")
+                if(self.Grid[i][j] == 'T'):
+                    print(Cor.MAGENTA + self.Grid[i][j] + Cor.RESET, end=" ")
+            print()
+
 def Compute_Score(count_R, count_B): #Calculates the value for a set of pieces , as specified in the project worksheet
     if(count_R >= 1 and count_B >= 1):#Mixed pieces
         return 0
@@ -7,8 +30,11 @@ def Compute_Score(count_R, count_B): #Calculates the value for a set of pieces ,
         if(count_R != 0): #Red pieces
             match count_R:
                 case 1:
+                    #print("desgraca")
+                    #print(count_R)
                     return (1)
                 case 2:
+                    #print("desgracado")
                     return (10)
                 case 3:
                     return (50)
@@ -104,14 +130,14 @@ def Compute_Diagonals_Positive(Game):
             total_temp = 0
             count_R = 0
             count_B = 0
-            count_number_fors -= 1
+        count_number_fors -= 1
     count_number_fors = 3
     for i in range(3): #Diagonal positiva 2/2
         for temp in range (count_number_fors):
             for j in range(4):
-                if(Game.Grid[i+j+temp][1+j+temp] == 'X'):
+                if(Game.Grid[j+temp][1+j+temp+i] == 'X'):
                     continue
-                elif(Is_Red(Game.Grid[i+j+temp][1+j+temp])):
+                elif(Is_Red(Game.Grid[j+temp][1+j+temp+i])):
                     count_R += 1
                 else:
                     count_B += 1
@@ -122,14 +148,14 @@ def Compute_Diagonals_Positive(Game):
             total_temp = 0
             count_R = 0
             count_B = 0
-            count_number_fors -= 1
+        count_number_fors -= 1
     count_number_fors = 3
     for i in range(3): #Diagonal negativa 1/2
         for temp in range (count_number_fors):
             for j in range(4):
-                if(Game.Grid[0+j+temp][6-i-j-temp] == 'X'):
+                if(Game.Grid[0+j+temp+i][6-j-temp] == 'X'):
                     continue
-                elif(Is_Red(Game.Grid[0+j+temp][6-i-j-temp])):
+                elif(Is_Red(Game.Grid[0+j+temp+i][6-j-temp])):
                     count_R += 1
                 else:
                     count_B += 1
@@ -140,14 +166,14 @@ def Compute_Diagonals_Positive(Game):
             total_temp = 0
             count_R = 0
             count_B = 0
-            count_number_fors -= 1
+        count_number_fors -= 1
     count_number_fors = 3
     for i in range(3): #Diagonal negativa 1/2
         for temp in range (count_number_fors):
             for j in range(4):
                 if(Game.Grid[0+j+temp][5-i-j-temp] == 'X'):
                     continue
-                elif(Is_Red(Game.Grid[0+j+temp][6-i-j-temp])):
+                elif(Is_Red(Game.Grid[0+j+temp][5-i-j-temp])):
                     count_R += 1
                 else:
                     count_B += 1
@@ -158,32 +184,35 @@ def Compute_Diagonals_Positive(Game):
             total_temp = 0
             count_R = 0
             count_B = 0
-            count_number_fors -= 1
+        count_number_fors -= 1
     count_number_fors = 3
     return total
 
 def Total_Value(Game):
     sum_columns = 0
-    sum_diagonals = sum_columns
+    sum_diagonals = 0 
+    sum_columns = 0
     sum_lines = Compute_Lines(Game)
+    print(sum_lines)
     if(sum_lines == 512 or sum_lines == -512):
         return sum_lines
     sum_columns = Compute_Columns(Game)
+    print(sum_columns)
     if(sum_columns == 512 or sum_columns == -512):
         return sum_columns
     sum_diagonals = Compute_Diagonals_Positive(Game)
+    print(sum_diagonals)
     if(sum_diagonals == 512 or sum_diagonals == -512):
         return sum_diagonals
     return (sum_lines + sum_columns + sum_diagonals)
 
-total = 0 #Declared as a Global Variable, mainly becaused it's used across multiple functions
 # bravo = Board()
 # bravo.Grid[0][5] = 'B'
 # bravo.Grid[0][1] = 'R'
 # bravo.Grid[0][2] = 'R'
 # bravo.Grid[0][3] = 'R'
-# bravo.Grid[0][4] = 'B'
-# bravo.Grid[0][0] = 'R'
+# bravo.Grid[5][3] = 'R'
+# bravo.Grid[5][6] = 'R'
 # bravo.print_grid()
 # out = Total_Value(bravo)
 # print(out)
