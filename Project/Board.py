@@ -78,7 +78,8 @@ def Red_moves(Return_Board, red_human_player, heuristic): #Computes Reds movemen
         Return_Board.print_grid()
         heuristic = A_Star(list_possible_moves, 'R', Return_Board, heuristic)
         Return_Board.print_grid()
-    system('clear')
+    #system('clear')
+    print(heuristic)
     return heuristic
 
 def Blue_moves(Return_Board:Board, blue_human_player, heuristic): #Computes Blues movement
@@ -119,9 +120,8 @@ def Blue_moves(Return_Board:Board, blue_human_player, heuristic): #Computes Blue
         Return_Board.print_grid()
         heuristic = A_Star(list_possible_moves, 'B', Return_Board, heuristic)
         Return_Board.print_grid()
-    system('clear')
-    return heuristic
-    system('clear')
+    #system('clear')
+    print(heuristic)
     return heuristic
 
 def Game_is_Over(test, color): #Checks if the Game is over
