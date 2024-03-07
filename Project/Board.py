@@ -34,94 +34,72 @@ def Take_Int_input(): #Takes input from the stdin and makes sure the input is an
 
 def Make_Move(Return_Board, index, color): #Computes the move, inputed by the index argument, by the player indentified by the color argument
     for i in range(5, -1, -1):
-        if(Return_Board.Grid[i][index-1] == 'X'):
-            Return_Board.Grid[i][index-1] = color
+        if(Return_Board.Grid[i][index] == 'X'):
+            Return_Board.Grid[i][index] = color
             return
     print("You should not be here")
 
 def Red_moves(Return_Board, red_human_player, heuristic): #Computes Reds movement
-    # Return_Board = Board() 
-    # lista_temp = copy.deepcopy(Game.Grid)
-    # setattr(Return_Board, 'Grid', lista_temp) #For the last three lines, because of python refence bullshittery, I had to make a deepcopy of the Board.Grid. Right now either the value is passed by reference or not doesn't make a difference but in order to no fuck up the code in the future I made it this way. Any other solutions are welcome since this looks ugly and must be pretty inneficient :3
+    print("Reds Turn")
+    print()
     list_possible_moves = [False for _ in range(7)] #List of possible moves, for now its entirety is false
-    if(red_human_player): #Checks if Red player is human or not, the negative case is not currently implemented
-        print("Reds Turn")
-        for i in range(7): #Checks if all columns are filled (in other words if a move is possible), if it is, print the corresponding number above the column
+    for i in range(7): #Checks if all columns are filled (in other words if a move is possible), if it is, print the corresponding number above the column
             if(Return_Board.Grid[0][i] == 'X'):
                 print(i+1, end= " ")
                 list_possible_moves[i] = True #Also sets the possible moves list in its i possition to true
             else:
                 print(" ", end = " ") #Else sets it to false just to make sure
                 list_possible_moves[i] = False
+    if(red_human_player): #Checks if Red player is human or not, the negative case is not currently implemented
         print()
         Return_Board.print_grid()
         if(not(True in list_possible_moves)): #Checks if game is a tie
             print("Game is a Tie")
             exit()
         while(True):
-            move = Take_Int_input()#User input, if the move is possible it calls the Make_Move function, if not outputs error and returns to here
-            if(move <= 7 and move > 0):
-                if(list_possible_moves[move-1]):
+            move = Take_Int_input() - 1#User input, if the move is possible it calls the Make_Move function, if not outputs error and returns to here
+            if(move <= 6 and move >= 0):
+                if(list_possible_moves[move]):
                     Make_Move(Return_Board, move, 'R')
                     break
-            print("Invalid move you moron")
         heuristic = Total_Value(Return_Board)
     else:
-        for i in range(7): #Checks if all columns are filled (in other words if a move is possible), if it is, print the corresponding number above the column
-            if(Return_Board.Grid[0][i] == 'X'):
-                print(i+1, end= " ")
-                list_possible_moves[i] = True #Also sets the possible moves list in its i possition to true
-            else:
-                print(" ", end = " ") #Else sets it to false just to make sure
-                list_possible_moves[i] = False
         print()
         Return_Board.print_grid()
         heuristic = A_Star(list_possible_moves, 'R', Return_Board, heuristic)
         Return_Board.print_grid()
     #system('clear')
-    print(heuristic)
     return heuristic
 
 def Blue_moves(Return_Board:Board, blue_human_player, heuristic): #Computes Blues movement
-    # Return_Board = Board() 
-    # lista_temp = copy.deepcopy(Game.Grid)
-    # setattr(Return_Board, 'Grid', lista_temp) #For the last three lines, because of python refence bullshittery, I had to make a deepcopy of the Board.Grid. Right now either the value is passed by reference or not doesn't matter but in order to no fuck up the code in the future I made it this way. Any other solutions are welcome since this looks ugly and must be pretty inneficient :3
+    print("Blues Turn")
+    print()
     list_possible_moves = [False for _ in range(7)] #List of possible moves
-    if(blue_human_player): #Checks if the blue player is human or not, the negative case is not currently implemented
-        print("Blues Turn")
-        for i in range(7): #Checks if all columns are filled (in other words if a move is possible), if it is, print the corresponding number above the column
+    for i in range(7): #Checks if all columns are filled (in other words if a move is possible), if it is, print the corresponding number above the column
             if(Return_Board.Grid[0][i] == 'X'):
                 print(i+1, end= " ")
                 list_possible_moves[i] = True #Also sets the possible moves list in its i possition to true
             else:
                 print(" ", end = " ") #Else sets it to false just to make sure
                 list_possible_moves[i] = False
-        print()
+    print()
+    if(blue_human_player): #Checks if the blue player is human or not, the negative case is not currently implemented
         Return_Board.print_grid()
         if(not(True in list_possible_moves)): #Checks if game is a tie
             print("Game is a Tie")
             exit()
         while(True):
-            move = Take_Int_input()#User input, if the move is possible it calls the Make_Move function, if not outputs error and returns to here
-            if(move <= 7 and move > 0):
-                if(list_possible_moves[move-1]):
+            move = Take_Int_input() - 1#User input, if the move is possible it calls the Make_Move function, if not outputs error and returns to here
+            if(move <= 6 and move >= 0):
+                if(list_possible_moves[move]):
                     Make_Move(Return_Board, move, 'B')
                     break
-            print("Invalid move you moron")
     else:
-        for i in range(7): #Checks if all columns are filled (in other words if a move is possible), if it is, print the corresponding number above the column
-            if(Return_Board.Grid[0][i] == 'X'):
-                print(i+1, end= " ")
-                list_possible_moves[i] = True #Also sets the possible moves list in its i possition to true
-            else:
-                print(" ", end = " ") #Else sets it to false just to make sure
-                list_possible_moves[i] = False
         print()
         Return_Board.print_grid()
         heuristic = A_Star(list_possible_moves, 'B', Return_Board, heuristic)
         Return_Board.print_grid()
     #system('clear')
-    print(heuristic)
     return heuristic
 
 def Game_is_Over(test, color): #Checks if the Game is over
