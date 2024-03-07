@@ -193,15 +193,12 @@ def Total_Value(Game):
     sum_diagonals = 0 
     sum_columns = 0
     sum_lines = Compute_Lines(Game)
-    print(sum_lines)
     if(sum_lines == 512 or sum_lines == -512):
         return sum_lines
     sum_columns = Compute_Columns(Game)
-    print(sum_columns)
     if(sum_columns == 512 or sum_columns == -512):
         return sum_columns
     sum_diagonals = Compute_Diagonals_Positive(Game)
-    print(sum_diagonals)
     if(sum_diagonals == 512 or sum_diagonals == -512):
         return sum_diagonals
     return (sum_lines + sum_columns + sum_diagonals)
