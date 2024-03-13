@@ -1,149 +1,97 @@
-import random
-import math
 import copy
-from Board import *
+import random
+from Board import Board, Make_Move, Game_is_Over
+from heuristic import Total_Value
 
-class Cor: #For colors, pretty self intuitive
-    RESET = '\033[0m'
-    VERMELHO = '\033[91m'
-    AZUL = '\033[94m'
-    MAGENTA = '\033[95m'
-    
 class Node:
-    def __init__(self, state, player, parent=None):
+    def __init__(self, state):
         self.state = state
-        self.player = player
-        self.parent = parent
-        self.children = []
         self.visits = 0
-        self.reward = 0
+        self.score = 0
+        self.children = []
+        self.parent = None
 
-    def child(self, node):
-        self.children.append(node)
+def select(node): # Seleciona o nó filho com base na política UCB (Upper Confidence Bound)
+    selected_node = None
+    max_ucb = -float('inf')
+    for child in node.children:
+        if child.visits == 0:
+            ucb = float('inf') 
+        else:
+            ucb = (child.score / child.visits) + (2 * (2 * node.visits / child.visits) ** 0.5)  # Fórmula do UCB
+        if ucb > max_ucb:
+            max_ucb = ucb
+            selected_node = child
+    return selected_node
 
-    def __repr__(self):
-        return f"Node({self.state}, {self.player}, {self.parent})"
-    
-    def get_score(self):
-        if len(self.children) == 0:
-            return self.reward / self.visits if self.visits > 0 else 0
-        total_visits = sum([child.visits for child in self.children])
-        total_reward = sum([child.reward for child in self.children])
-        return total_reward / total_visits + 1.4 * (math.sqrt(math.log(self.visits) / total_visits)) if total_visits > 0 else 0
+def expand(node): # Gera todos os possíveis movimentos a partir do estado atual do jogo
+    for column in range(7):
+        temp_game = copy.deepcopy(node.state)
+        if Game_is_Over(temp_game, 'R') or Game_is_Over(temp_game, 'B'):
+            break
+        if temp_game.Grid[0][column] == 'X':
+            Make_Move(temp_game, column, 'R') 
+            new_node = Node(temp_game)
+            new_node.parent = node
+            node.children.append(new_node)
 
-def simulate(state, player): 
-    while not Game_is_Over(state, player):
-        move = random.randint(0, 6)
-        state = Make_Move(state, player, move)
-        player = -player
-    return Game_is_Over(state,player)
+def simulate(state): #Realiza uma simulação do jogo a partir do estado atual e usa a heurística para avaliar o resultado
+    temp_game = copy.deepcopy(state)
+    while not Game_is_Over(temp_game, 'R') and not Game_is_Over(temp_game, 'B'): # Simula movimentos aleatórios até que o jogo termine
+        columns = [i for i in range(7) if temp_game.Grid[0][i] == 'X']
+        column = random.choice(columns)
+        Make_Move(temp_game, column, 'R') 
+    return Total_Value(temp_game) 
 
+def backpropagate(node, score): # Atualiza as estatísticas de visitas e pontuação de todos os nós percorridos de volta à raiz
+    while node is not None:
+        node.visits += 1
+        node.score += score
+        node = node.parent
 
-def monte_carlo(state, iterations):
-    root = Node(state, 1)
-
+def mcts(state, iterations):
+    root = Node(state)
     for _ in range(iterations):
         node = root
-        path = [node]
-        
-        while True:
-            if len(node.children) == 0 or node.visits == 0:
-                break
-            node = max(node.children, key=lambda x: x.get_score())
-            path.append(node)
+        while node.children:
+            node = select(node)
+        expand(node)
+        score = simulate(node.state)
+        backpropagate(node, score)
+    best_move = None
+    best_score = -float('inf')
+    for child in root.children:
+        if child.visits > 0 and child.score / child.visits > best_score:
+            best_move = child.state
+            best_score = child.score / child.visits
 
-        child_state = copy.deepcopy(node.state)
-        child_player = -node.player
-        move = random.randint(0, 6)
-        child_state = Make_Move(child_state, child_player, move)
-        child_node = Node(child_state, -child_player, node)
-        node.child(child_node)
-        reward = simulate(child_state, child_player)
-        
-        for n in path[::-1]:
-            n.visits += 1
-            n.reward += reward
-
-    if len(root.children) == 0:
-        return Node(state, 1)
-
-    return max(root.children, key=lambda x: x.get_score())
-
-def get_best_move(state, iterations):
-    root = Node(state, 1)
-
-    if not root.children:
-
-        return len(state[0]) // 2
-    
-    best_child = max(root.children, key=lambda x: x.get_score())
-    for _ in range(iterations):
-        node = monte_carlo(root, iterations)
-        if node.player == 1:
-            best_child = node
-    move = best_child.state.index(0)
-    print("Best child:", best_child)
-    print("Children of root:", root.children)
-    return move
-
-
-
+    return best_move
 
 def main():
-    board = Board() 
-    current_player = 1
-    iterations = 1000
-
-    while True:
-        board.print_grid()  
-        if current_player == 1:
-            print("Player 1's turn")
-            col = int(input("Enter the column to drop your piece: "))
-            if board.Grid[0][col] != 'X': 
-                print("Column is full. Try again.")
-                continue
-            row = Make_Move(board, col, 'R')  
-            board.Grid[row][col] = 'R'  
-        else:
-            print("Player 2's turn (AI)")
-            best_move = get_best_move(board.Grid, iterations) 
-            if best_move == -1:
-                print("No valid moves for AI. Try again.")
-                continue
-            row = Make_Move(board, best_move, 'B')  
-            board.Grid[row][best_move] = 'B'  
-
-        if Game_is_Over(board, current_player): 
-            board.print_grid() 
-            print(f"Player {current_player} wins!")
+    board = Board()
+    while not Game_is_Over(board, 'R') and not Game_is_Over(board, 'B'):
+        board.print_grid()
+        move_col = int(input("Enter your move (1-7): ")) - 1
+        if move_col < 0 or move_col >= 7 or board.Grid[0][move_col] != 'X':
+            print("Invalid move. Try again.")
+            continue
+        Make_Move(board, move_col, 'B') 
+        
+        if Game_is_Over(board, 'B'):
+            print("Blue Wins!")
+            break
+        
+        move = mcts(board, iterations=1000)
+        if move is None:
+            print("No valid move found. Game over.")
+            break
+        Make_Move(board, move, 'R')
+        
+        if Game_is_Over(board, 'R'):
+            print("Red Wins!")
             break
 
-        if len([cell for row in board.Grid for cell in row if cell == 'X']) == 0:  
-            board.print_grid()  
-            print("It's a draw!")
-            break
-
-        current_player *= -1
-
-
-def print_grid(self):  # Prints the Grid, pretty self intuitive
-        for i in range(6):
-            for j in range(7):
-                if(self.Grid[i][j] == 'R'):
-                    print(Cor.VERMELHO + self.Grid[i][j] + Cor.RESET, end=" ")
-                if(self.Grid[i][j] == 'B'):
-                    print(Cor.AZUL + self.Grid[i][j] + Cor.RESET, end=" ")
-                if(self.Grid[i][j] == 'X'):
-                    print(self.Grid[i][j], end=" ")    
-            print()
-            
-def Make_Move(Return_Board, index, color): #Computes the move, inputed by the index argument, by the player indentified by the color argument
-    for i in range(5, -1, -1):
-        if(Return_Board.Grid[i][index] == 'X'):
-            Return_Board.Grid[i][index] = color
-            return i 
-    print("You should not be here")
-
+    board.print_grid()
 
 if __name__ == "__main__":
     main()
