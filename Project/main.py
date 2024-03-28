@@ -45,14 +45,31 @@ def main(): #Used to run the program
         case 4:
             red_human_player = False
             blue_human_player = False
+    print("Choose an algorithm: ")
+    print("[1] A * Star")
+    print("[2] MCTS")
+    while(True):
+        try:
+            opc = int(input())
+            break
+        except ValueError:
+            continue
     heuristic = 0
     print(Cor.MAGENTA + "Start!" + Cor.RESET) # Very important!
     test = Board()
     while(True): #Used for playing the game, first comes reds turn then if the game is not over comes blues turn and again if it's no over it loops back to reds turn
-        heuristic = Red_moves(test, red_human_player, heuristic)
+        heuristic = Red_moves(test, red_human_player, heuristic, opc)
         if(Game_is_Over(test, 'R')):
             break
-        heuristic = Blue_moves(test, blue_human_player,heuristic)
+        heuristic = Blue_moves(test, blue_human_player,heuristic, opc)
         if(Game_is_Over(test, 'B')):
-            break 
+            break
+    print()
+    if(Game_is_Over(test, 'R')):
+        print ("RED WINS!")
+    if(Game_is_Over(test, 'B')):
+        print ("BLUE WINS!")
+    if(not(Game_is_Over(test, 'R') and Game_is_Over(test, 'B'))):
+        print("DRAW!")
+    test.print_grid()
 main()#Currently nothing but the Board implemented
