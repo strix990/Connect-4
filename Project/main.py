@@ -69,7 +69,7 @@ def main(): #Used to run the program
         print ("RED WINS!")
     if(Game_is_Over(test, 'B')):
         print ("BLUE WINS!")
-    if(not(Game_is_Over(test, 'R') and Game_is_Over(test, 'B'))):
+    if(not(Game_is_Over(test, 'R') or Game_is_Over(test, 'B'))):
         print("DRAW!")
     test.print_grid()
 main()#Currently nothing but the Board implemented
