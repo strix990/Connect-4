@@ -2,6 +2,8 @@ from os import system
 # #from a_star impor A_Star
 import copy
 from a_star import *
+from monte_carlo import mcts
+VALOR = 10000
 
 class Cor: #For colors, pretty self intuitive
     RESET = '\033[0m'
@@ -39,16 +41,18 @@ def Make_Move(Return_Board, index, color): #Computes the move, inputed by the in
             return
     print("You should not be here")
 
-def Red_moves(Return_Board, red_human_player, heuristic): #Computes Reds movement
+def Red_moves(Return_Board, red_human_player, heuristic, cpu): #Computes Reds movement / PASSAR PARAMETRO PARA JOGAR COM O MCTS
     print("Reds Turn")
     print()
     list_possible_moves = [False for _ in range(7)] #List of possible moves, for now its entirety is false
     for i in range(7): #Checks if all columns are filled (in other words if a move is possible), if it is, print the corresponding number above the column
             if(Return_Board.Grid[0][i] == 'X'):
-                print(i+1, end= " ")
+                if (red_human_player):
+                    print(i+1, end= " ")
                 list_possible_moves[i] = True #Also sets the possible moves list in its i possition to true
             else:
-                print(" ", end = " ") #Else sets it to false just to make sure
+                if (red_human_player):
+                    print(" ", end = " ") #Else sets it to false just to make sure
                 list_possible_moves[i] = False
     if(red_human_player): #Checks if Red player is human or not, the negative case is not currently implemented
         print()
@@ -65,22 +69,29 @@ def Red_moves(Return_Board, red_human_player, heuristic): #Computes Reds movemen
         heuristic = Total_Value(Return_Board)
     else:
         print()
+        #Return_Board.print_grid()
+        if (cpu == 1):
+            heuristic = A_Star(list_possible_moves, 'R', Return_Board, heuristic)
+        else:
+            move = mcts(Return_Board, VALOR, 1)
+            Make_Move(Return_Board, move, 'R')
         Return_Board.print_grid()
-        heuristic = A_Star(list_possible_moves, 'R', Return_Board, heuristic)
-        Return_Board.print_grid()
+        print()
     #system('clear')
     return heuristic
 
-def Blue_moves(Return_Board:Board, blue_human_player, heuristic): #Computes Blues movement
+def Blue_moves(Return_Board:Board, blue_human_player, heuristic, cpu): #Computes Blues movement
     print("Blues Turn")
     print()
     list_possible_moves = [False for _ in range(7)] #List of possible moves
     for i in range(7): #Checks if all columns are filled (in other words if a move is possible), if it is, print the corresponding number above the column
             if(Return_Board.Grid[0][i] == 'X'):
-                print(i+1, end= " ")
+                if (blue_human_player):
+                    print(i+1, end= " ")
                 list_possible_moves[i] = True #Also sets the possible moves list in its i possition to true
             else:
-                print(" ", end = " ") #Else sets it to false just to make sure
+                if (blue_human_player):
+                    print(" ", end = " ") #Else sets it to false just to make sure
                 list_possible_moves[i] = False
     print()
     if(blue_human_player): #Checks if the blue player is human or not, the negative case is not currently implemented
@@ -95,10 +106,13 @@ def Blue_moves(Return_Board:Board, blue_human_player, heuristic): #Computes Blue
                     Make_Move(Return_Board, move, 'B')
                     break
     else:
+        if (cpu == 1):
+            heuristic = A_Star(list_possible_moves, 'B', Return_Board, heuristic)
+        else:
+            move = mcts(Return_Board, VALOR, 2)
+            Make_Move(Return_Board, move, 'B')
+        Return_Board.print_grid()
         print()
-        Return_Board.print_grid()
-        heuristic = A_Star(list_possible_moves, 'B', Return_Board, heuristic)
-        Return_Board.print_grid()
     #system('clear')
     return heuristic
 
@@ -106,16 +120,16 @@ def Game_is_Over(test, color): #Checks if the Game is over
     for i in range(3):
         for j in range(4):
             if(Check_Column(test, i, j, color)): # Here it checks the Columns
-                print(color +" Wins")
-                test.print_grid()
+                #print(color +" Wins")
+                #test.print_grid()
                 return True
             if(Check_Line(test, i, j, color)): # Here it checks the Lines
-                print(color + " Wins")
-                test.print_grid()
+                #print(color + " Wins")
+                #test.print_grid()
                 return True
             if(Check_Diagonal(test, i, j, color)): # Here it checks the Diagonals
-                print(color + " Wins")
-                test.print_grid()
+                #print(color + " Wins")
+                #test.print_grid()
                 return True
     return False
 
@@ -132,7 +146,6 @@ def Check_Column(Game, i_plus, j_plus, player): # Simple checking Column algorit
     return False
 
 def Check_Diagonal(Game, i_plus, j_plus, player): # Simple checking Diagonal algorithm
-    
     if((Game.Grid[0 + i_plus][0 + j_plus] == player and Game.Grid[1 + i_plus][1 + j_plus] == player and Game.Grid[2 + i_plus][2 + j_plus] == player and Game.Grid[3 + i_plus][3 + j_plus] == player) or (Game.Grid[0 + i_plus][3 + j_plus] == player and Game.Grid[1 + i_plus][2 + j_plus] == player and Game.Grid[2 + i_plus][1 + j_plus] == player and Game.Grid[3 + i_plus][0 + j_plus] == player)):
         return True
     return False
