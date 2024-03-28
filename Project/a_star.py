@@ -43,7 +43,7 @@ def Find_value(playerColor, value_temp):
             if(value_temp[i] < greatest_value):
                 greatest_value = value_temp[i]
                 position = i
-    print(position)
+    #print(position)
     return position
 
 def A_Star(visited, playerColor, game, heuristic_value):
@@ -58,10 +58,10 @@ def A_Star(visited, playerColor, game, heuristic_value):
             Make_Move(a_star_board, i, playerColor)
             if(playerColor == 'R'):
                 value_temp_R[i] = Total_Value(a_star_board)
-                print("Valor na (" + str(i) + " " + str(value_temp_R[i]) + ")")
+                #print("Valor na (" + str(i) + " " + str(value_temp_R[i]) + ")")
             elif(playerColor == 'B'):
                 value_temp_B[i] = Total_Value(a_star_board)
-                print("Valor na (" + str(i) + " " + str(value_temp_B[i]) + ")")
+                #print("Valor na (" + str(i) + " " + str(value_temp_B[i]) + ")")
     if(playerColor == 'R'):
         move_position = Find_value(playerColor, value_temp_R)
     elif(playerColor == 'B'):
