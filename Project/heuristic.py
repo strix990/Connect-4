@@ -30,11 +30,8 @@ def Compute_Score(count_R, count_B): #Calculates the value for a set of pieces ,
         if(count_R != 0): #Red pieces
             match count_R:
                 case 1:
-                    #print("desgraca")
-                    #print(count_R)
                     return (1)
                 case 2:
-                    #print("desgracado")
                     return (10)
                 case 3:
                     return (50)
@@ -43,16 +40,12 @@ def Compute_Score(count_R, count_B): #Calculates the value for a set of pieces ,
         elif(count_B != 0): #Blue pieces
             match count_B:
                 case 1:
-                    #print("filha da puta")
                     return -1
                 case 2:
-                    #print("FILHA DA PUTA")
                     return -10
                 case 3:
-                    #print("filho do puto")
                     return -50
                 case 4:
-                    #print("FILHO DO PUTO")
                     return -512
     return 0
 
